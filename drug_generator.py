@@ -6,6 +6,7 @@ Created on Mon May  1 19:41:07 2023
 """
 
 import os
+import sys
 import subprocess
 import warnings
 from tqdm import tqdm
@@ -27,6 +28,8 @@ parser.add_argument('-l', type=str, default='', help='Input the ligand prompt. D
 parser.add_argument('-n', type=int, default=100, help='Number of output molecules to generate. Default value is 100.')
 parser.add_argument('-d', type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
 parser.add_argument('-o', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
+parser.add_argument('-b', type=int, default=64, help="Total number of generated molecules per batch. Try to reduce this value if you have a low RAM. Default value is 64.")
+
 
 args = parser.parse_args()
 
@@ -36,7 +39,7 @@ ligand_prompt = args.l
 num_generated = args.n
 device = args.d
 output_path = args.o
-
+batch_generated_size = args.b
 
 def ifno_mkdirs(dirname):
     if not os.path.exists(dirname):
@@ -59,13 +62,14 @@ def read_fasta_file(file_path):
     return protein_sequence
 
 # Check if the input is either a protein amino acid sequence or a FASTA file, but not both
-if (protein_seq is not None) != (fasta_file is not None):
-    if fasta_file is not None:
-        protein_seq = read_fasta_file(fasta_file)
-    else:
-        protein_seq = protein_seq
-else:
-    print("The input should be either a protein amino acid sequence or a FASTA file, but not both.")
+if (not protein_seq) and (not fasta_file):
+    print("Error: Input is empty.")
+    sys.exit(1)
+if protein_seq and fasta_file:
+    print("Error: The input should be either a protein amino acid sequence or a FASTA file, but not both.")
+    sys.exit(1)
+if fasta_file:
+    protein_seq = read_fasta_file(fasta_file)
 
 # Load the tokenizer and the model
 tokenizer = AutoTokenizer.from_pretrained('liyuesen/druggpt')
@@ -83,30 +87,44 @@ device = torch.device(device)
 model.to(device)
 
 
+# Define the post-processing class for ligands
+class LigandPostprocessor:
+    def __init__(self, output_path):
+        self.ligand_list_tmp = []  # Temporary list to store input ligands
+        self.ligand_list = []  # List to store ligands after filtering
+        self.output_path = output_path  # Output directory for SDF files
+    
+    # Add a list of ligands to the temporary ligand list
+    def add_ligand_list(self, ligand_list_input):
+        
+        self.ligand_list_tmp = ligand_list_input
 
-#Define post-processing function
-#Define function to generate SDF files from a list of ligand SMILES using OpenBabel
-def get_sdf(ligand_list,output_path):
-    for ligand in tqdm(ligand_list):
-        filename = output_path + 'ligand_' + ligand +'.sdf'
-        cmd = "obabel -:" + ligand + " -osdf -O " + filename + " --gen3d --forcefield mmff94"# --conformer --nconf 1 --score rmsd
-        #subprocess.check_call(cmd, shell=True)
-        try:
-            output = subprocess.check_output(cmd, timeout=10)
-        except subprocess.TimeoutExpired:
-            pass
-#Define function to filter out empty SDF files
-def filter_sdf(output_path):
-    filelist = os.listdir(output_path)
-    for filename in filelist:
-        filepath = os.path.join(output_path,filename)
-        with open(filepath,'r') as f:
-            text = f.read()
-        if len(text)<2:
-            os.remove(filepath)
+    # Define a function to generate SDF files from a list of ligand SMILES using OpenBabel
+    def get_sdf(self):
+        print("Converting to sdf ...")
+        for ligand in tqdm(self.ligand_list_tmp):
+            filename = self.output_path + 'ligand_' + ligand + '.sdf'
+            cmd = "obabel -:" + ligand + " -osdf -O " + filename + " --gen3d --forcefield mmff94"
+            try:
+                subprocess.check_output(cmd, timeout=10, stderr=subprocess.DEVNULL)
+            except subprocess.TimeoutExpired:
+                pass
 
+    # Define a function to filter out empty SDF files
+    def filter_sdf(self):
+        filelist = os.listdir(self.output_path)
+        for filename in filelist:
+            if filename not in self.ligand_list:
+                filepath = os.path.join(self.output_path, filename)
+                with open(filepath, 'r') as f:
+                    text = f.read()
+                if len(text) < 2:
+                    os.remove(filepath)
+                else: 
+                    self.ligand_list.append(filename)
 
-
+# Create a LigandPostprocessor object
+ligand_post_processor = LigandPostprocessor(output_path)
 
 # Generate molecules
 generated = torch.tensor(tokenizer.encode(prompt)).unsqueeze(0)
@@ -115,6 +133,7 @@ generated = generated.to(device)
 
 for i in range(100):
     ligand_list = []
+    print("generating ligand SMILES ...")
     sample_outputs = model.generate(
                                     generated, 
                                     #bos_token_id=random.randint(1,30000),
@@ -122,15 +141,16 @@ for i in range(100):
                                     top_k=5, 
                                     max_length = 1024,
                                     top_p=0.6, 
-                                    num_return_sequences=64
+                                    num_return_sequences=batch_generated_size
                                     )
 
-    for i, sample_output in enumerate(sample_outputs):
+    for sample_output in sample_outputs:
         ligand_list.append(tokenizer.decode(sample_output, skip_special_tokens=True).split('<L>')[1])
     torch.cuda.empty_cache()
       
-    get_sdf(ligand_list,output_path)
-    filter_sdf(output_path)
+    ligand_post_processor.add_ligand_list(ligand_list)
+    ligand_post_processor.get_sdf()
+    ligand_post_processor.filter_sdf()
 
     if len(os.listdir(output_path))>num_generated:
         break
