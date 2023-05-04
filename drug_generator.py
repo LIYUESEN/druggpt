@@ -125,7 +125,7 @@ for i in range(100):
                                     num_return_sequences=64
                                     )
 
-    for i, sample_output in enumerate(sample_outputs):
+    for sample_output in sample_outputs:
         ligand_list.append(tokenizer.decode(sample_output, skip_special_tokens=True).split('<L>')[1])
     torch.cuda.empty_cache()
       
