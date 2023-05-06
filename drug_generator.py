@@ -127,7 +127,8 @@ if __name__ == "__main__":
     device = args.d
     output_path = args.o
     batch_generated_size = args.b
-
+    
+    ifno_mkdirs(output_path)
     # Check if the input is either a protein amino acid sequence or a FASTA file, but not both
     if (not protein_seq) and (not fasta_file):
         print("Error: Input is empty.")
@@ -161,7 +162,7 @@ if __name__ == "__main__":
     generated = generated.to(device)
 
     batch_number = 0
-    ifno_mkdirs(output_path)
+
 
     while len(os.listdir(output_path))<num_generated:
         generate_ligand_list = []
