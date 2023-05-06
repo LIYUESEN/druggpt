@@ -1,5 +1,5 @@
 <div class="title" align=center>
-    <h1>DrugGPT</h1>
+    <h1>💊DrugGPT</h1>
 	<div>A generative drug design model based on GPT2</div>
     <br/>
     <p>
@@ -9,8 +9,13 @@
         
 </div>
 
+## 🚩 Introduction
+DrugGPT is a generative pharmaceutical strategy based on GPT structure, which aims to bring innovation to drug design by using natural language processing technique. 
 
-## Deployment
+This project applies the GPT model to the exploration of chemical space to discover new molecules with potential binding abilities for specific proteins. 
+
+DrugGPT provides a fast and efficient method for the generation of drug candidate molecules by training on up to 1.8 million protein-ligand binding data.
+## 📥 Deployment
 ### Clone
 ```shell
 git clone https://github.com/LIYUESEN/druggpt.git
@@ -28,8 +33,20 @@ pip install datasets transformers scipy scikit-learn
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 conda install -c openbabel openbabel
 ```
-## Example usage
-Run the script with the desired arguments, such as the protein sequence, ligand prompt, number of molecules to generate, and output directory.  
+## 🗝 How to use
+Use [drug_generator.py](https://github.com/LIYUESEN/druggpt/blob/main/drug_generator.py)
+
+Required parameters:
+- `-p` | `--pro_seq`: Input a protein amino acid sequence.
+- `-f` | `--fasta`: Input a FASTA file.
+
+  > Only one of -p and -f should be specified.
+- `-l` | `--ligand_prompt`: Input a ligand prompt.
+- `-n` | `--number`: At least how many molecules will be generated.
+- `-d` | `--device`: Hardware device to use. Default is 'cuda'.
+- `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
+- `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 64.
+## 📃 Example usage 
 - If you want to input a protein FASTA file
     ```shell
     python drug_generator.py -f bcl2.fasta -n 50
@@ -43,5 +60,5 @@ Run the script with the desired arguments, such as the protein sequence, ligand 
     ```shell
     python drug_generator.py -f bcl2.fasta -l COc1ccc(cc1)C(=O) -n 50
     ```
-## License
+## ⚖ License
 [Artistic License 2.0](https://opensource.org/license/artistic-license-2-0-php/)
