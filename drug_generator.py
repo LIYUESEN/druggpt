@@ -100,7 +100,6 @@ def read_fasta_file(file_path):
                 sequence.append(line)
 
         protein_sequence = ''.join(sequence)
-
     return protein_sequence
 
 if __name__ == "__main__":
@@ -112,13 +111,13 @@ if __name__ == "__main__":
 
     # Set up command line argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', type=str, default=None, help='Input a protein amino acid sequence. Default value is None. Only one of -p and -f should be specified.')
-    parser.add_argument('-f', type=str, default=None, help='Input a FASTA file. Default value is None. Only one of -p and -f should be specified.')
-    parser.add_argument('-l', type=str, default='', help='Input a ligand prompt. Default value is an empty string.')
-    parser.add_argument('-n', type=int, default=100, help='At least how many molecules will be generated. Default value is 100.')
-    parser.add_argument('-d', type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
-    parser.add_argument('-o', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
-    parser.add_argument('-b', type=int, default=64, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 64.")
+    parser.add_argument('-p','--pro_seq', type=str, default=None, help='Input a protein amino acid sequence. Default value is None. Only one of -p and -f should be specified.')
+    parser.add_argument('-f','--fasta', type=str, default=None, help='Input a FASTA file. Default value is None. Only one of -p and -f should be specified.')
+    parser.add_argument('-l','--ligand_prompt', type=str, default='', help='Input a ligand prompt. Default value is an empty string.')
+    parser.add_argument('-n','--number',type=int, default=100, help='At least how many molecules will be generated. Default value is 100.')
+    parser.add_argument('-d','--device',type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
+    parser.add_argument('-o','--output', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
+    parser.add_argument('-b','--batch_size', type=int, default=64, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 64.")
 
     args = parser.parse_args()
     protein_seq = args.p
