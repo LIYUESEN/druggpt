@@ -42,6 +42,7 @@ Required parameters:
 
   > Only one of -p and -f should be specified.
 - `-l` | `--ligand_prompt`: Input a ligand prompt.
+- `-e` | `--empty_input`: Enable directly generate mode.
 - `-n` | `--number`: At least how many molecules will be generated.
 - `-d` | `--device`: Hardware device to use. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.

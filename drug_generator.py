@@ -11,6 +11,7 @@ import subprocess
 import hashlib
 import warnings
 import csv
+import numpy as np
 from tqdm import tqdm
 import argparse
 import torch
@@ -44,14 +45,15 @@ class LigandPostprocessor:
     def filter_sdf(self, hash_ligand_mapping_per_batch):
         print("Filtering sdf ...")
         ligand_hash_list = list(hash_ligand_mapping_per_batch.keys())
+        mapping_per_match = hash_ligand_mapping_per_batch.copy()
         for ligand_hash in tqdm(ligand_hash_list):
             filepath = os.path.join(self.output_path, ligand_hash + '.sdf')
             with open(filepath, 'r') as f:
                 text = f.read()
             if len(text) < 2:
                 os.remove(filepath)
-                hash_ligand_mapping_per_batch.pop(ligand_hash)
-        return hash_ligand_mapping_per_batch
+                mapping_per_match.pop(ligand_hash)
+        return mapping_per_match
 
     # Define a function to generate SDF files from a list of ligand SMILES using OpenBabel
     def to_sdf(self, ligand_list_per_batch):
@@ -67,8 +69,7 @@ class LigandPostprocessor:
                 except subprocess.TimeoutExpired:
                     pass
                 if os.path.exists(filepath):
-                    hash_ligand_mapping_per_batch[
-                        ligand_hash] = ligand  # Add the hash-ligand mapping to the dictionary
+                    hash_ligand_mapping_per_batch[ligand_hash] = ligand  # Add the hash-ligand mapping to the dictionary
         self.hash_ligand_mapping.update(self.filter_sdf(hash_ligand_mapping_per_batch))
 
 def about():
@@ -113,6 +114,7 @@ if __name__ == "__main__":
     parser.add_argument('-p','--pro_seq', type=str, default=None, help='Input a protein amino acid sequence. Default value is None. Only one of -p and -f should be specified.')
     parser.add_argument('-f','--fasta', type=str, default=None, help='Input a FASTA file. Default value is None. Only one of -p and -f should be specified.')
     parser.add_argument('-l','--ligand_prompt', type=str, default='', help='Input a ligand prompt. Default value is an empty string.')
+    parser.add_argument('-e','--empty_input', action='store_true', default=False, help='Enable directly generate mode.')
     parser.add_argument('-n','--number',type=int, default=100, help='At least how many molecules will be generated. Default value is 100.')
     parser.add_argument('-d','--device',type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
     parser.add_argument('-o','--output', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
@@ -122,6 +124,7 @@ if __name__ == "__main__":
     protein_seq = args.pro_seq
     fasta_file = args.fasta
     ligand_prompt = args.ligand_prompt
+    directly_gen = args.empty_input
     num_generated = args.number
     device = args.device
     output_path = args.output
@@ -129,26 +132,31 @@ if __name__ == "__main__":
 
     ifno_mkdirs(output_path)
     # Check if the input is either a protein amino acid sequence or a FASTA file, but not both
-    if (not protein_seq) and (not fasta_file):
-        print("Error: Input is empty.")
-        sys.exit(1)
-    if protein_seq and fasta_file:
-        print("Error: The input should be either a protein amino acid sequence or a FASTA file, but not both.")
-        sys.exit(1)
-    if fasta_file:
-        protein_seq = read_fasta_file(fasta_file)
+    if directly_gen:
+        print("Now in directly generate mode.")
+        prompt = "<|startoftext|><P>"
+        print(prompt)
+    else:
+        if (not protein_seq) and (not fasta_file):
+            print("Error: Input is empty.")
+            sys.exit(1)
+        if protein_seq and fasta_file:
+            print("Error: The input should be either a protein amino acid sequence or a FASTA file, but not both.")
+            sys.exit(1)
+        if fasta_file:
+            protein_seq = read_fasta_file(fasta_file)
+        # Generate a prompt for the model
+        p_prompt = "<|startoftext|><P>" + protein_seq + "<L>"
+        l_prompt = "" + ligand_prompt
+        prompt = p_prompt + l_prompt
+        print(prompt)
+
 
     # Load the tokenizer and the model
     tokenizer = AutoTokenizer.from_pretrained('liyuesen/druggpt')
     model = GPT2LMHeadModel.from_pretrained("liyuesen/druggpt")
 
-    # Generate a prompt for the model
-    p_prompt = "<|startoftext|><P>" + protein_seq + "<L>"
-    l_prompt = "" + ligand_prompt
-    prompt = p_prompt + l_prompt
-    print(prompt)
 
-    # Move the model to the specified device
     model.eval()
     device = torch.device(device)
     model.to(device)
@@ -162,29 +170,42 @@ if __name__ == "__main__":
 
     batch_number = 0
 
+    directly_gen_protein_list = []
+    directly_gen_ligand_list = []
 
-    while len(os.listdir(output_path))<num_generated:
+    while len(os.listdir(output_path)) < num_generated:
         generate_ligand_list = []
         batch_number += 1
-        print(f"Batch {batch_number}")
+        print(f"=====Batch {batch_number}=====")
         print("Generating ligand SMILES ...")
         sample_outputs = model.generate(
-                                        generated,
-                                        #bos_token_id=random.randint(1,30000),
-                                        do_sample=True,
-                                        top_k=5,
-                                        max_length = 1024,
-                                        top_p=0.6,
-                                        num_return_sequences=batch_generated_size
-                                        )
-
+            generated,
+            # bos_token_id=random.randint(1,30000),
+            do_sample=True,
+            top_k=5,
+            max_length=1024,
+            top_p=0.6,
+            num_return_sequences=batch_generated_size
+        )
         for sample_output in sample_outputs:
-            generate_ligand_list.append(tokenizer.decode(sample_output, skip_special_tokens=True).split('<L>')[1])
+            generate_ligand = tokenizer.decode(sample_output, skip_special_tokens=True).split('<L>')[1]
+            generate_ligand_list.append(generate_ligand)
+            if directly_gen:
+                directly_gen_protein_list.append(tokenizer.decode(sample_output, skip_special_tokens=True).split('<L>')[0])
+                directly_gen_ligand_list.append(generate_ligand)
         torch.cuda.empty_cache()
         ligand_post_processor.to_sdf(generate_ligand_list)
+
+    if directly_gen:
+        arr = np.array([directly_gen_protein_list, directly_gen_ligand_list])
+        processed_ligand_list = ligand_post_processor.hash_ligand_mapping.values()
+        with open(os.path.join(output_path, 'generate_directly.csv'), 'w', newline='') as f:
+            writer = csv.writer(f)
+            for index in range(arr.shape[1]):
+                protein, ligand = arr[0, index], arr[1, index]
+                if ligand in processed_ligand_list:
+                    writer.writerow([protein, ligand])
+
     print("Saving mapping file ...")
     ligand_post_processor.save_mapping()
     print(f"{len(ligand_post_processor.hash_ligand_mapping)} molecules successfully generated!")
-
-
-
