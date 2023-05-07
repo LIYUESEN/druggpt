@@ -119,13 +119,13 @@ if __name__ == "__main__":
     parser.add_argument('-b','--batch_size', type=int, default=64, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 64.")
 
     args = parser.parse_args()
-    protein_seq = args.p
-    fasta_file = args.f
-    ligand_prompt = args.l
-    num_generated = args.n
-    device = args.d
-    output_path = args.o
-    batch_generated_size = args.b
+    protein_seq = args.pro_seq
+    fasta_file = args.fasta
+    ligand_prompt = args.ligand_prompt
+    num_generated = args.number
+    device = args.device
+    output_path = args.output
+    batch_generated_size = args.batch_size
 
     ifno_mkdirs(output_path)
     # Check if the input is either a protein amino acid sequence or a FASTA file, but not both
