@@ -61,5 +61,11 @@ Required parameters:
     ```shell
     python drug_generator.py -f bcl2.fasta -l COc1ccc(cc1)C(=O) -n 50
     ```
+    
+- Note: If you are running in a Linux environment, you need to enclose the ligand's prompt with single quotes ('').  
+    ```shell
+    python drug_generator.py -f bcl2.fasta -l 'COc1ccc(cc1)C(=O)' -n 50
+    ```
+    
 ## ⚖ License
 [Artistic License 2.0](https://opensource.org/license/artistic-license-2-0-php/)
