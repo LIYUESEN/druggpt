@@ -46,7 +46,7 @@ Required parameters:
 - `-n` | `--number`: At least how many molecules will be generated.
 - `-d` | `--device`: Hardware device to use. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
-- `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 64.
+- `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
 ## 📃 Example usage 
 - If you want to input a protein FASTA file
     ```shell
