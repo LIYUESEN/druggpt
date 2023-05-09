@@ -77,6 +77,7 @@ class LigandPostprocessor:
                 try:
                     subprocess.check_output(cmd, timeout=10, stderr=subprocess.DEVNULL, shell=True)#
                 except Exception:# (subprocess.TimeoutExpired,subprocess.CalledProcessError)
+
                     pass
                 if os.path.exists(filepath):
                     hash_ligand_mapping_per_batch[ligand_hash] = ligand  # Add the hash-ligand mapping to the dictionary
@@ -133,6 +134,7 @@ if __name__ == "__main__":
     parser.add_argument('-d','--device',type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
     parser.add_argument('-o','--output', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
     parser.add_argument('-b','--batch_size', type=int, default=32, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 64.")
+
 
     args = parser.parse_args()
     protein_seq = args.pro_seq
@@ -223,3 +225,4 @@ if __name__ == "__main__":
     print("Saving mapping file ...")
     ligand_post_processor.save_mapping()
     print(f"{len(ligand_post_processor.hash_ligand_mapping)} molecules successfully generated!")
+
