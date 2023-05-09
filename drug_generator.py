@@ -10,12 +10,15 @@ import sys
 import subprocess
 import hashlib
 import warnings
+import platform
 import csv
 import numpy as np
 from tqdm import tqdm
 import argparse
 import torch
 from transformers import AutoTokenizer, GPT2LMHeadModel
+import shutil
+
 
 
 class LigandPostprocessor:
@@ -63,10 +66,18 @@ class LigandPostprocessor:
             ligand_hash = hashlib.sha1(ligand.encode()).hexdigest()
             if ligand_hash not in self.hash_ligand_mapping.keys():
                 filepath = self.output_path + ligand_hash + '.sdf'
-                cmd = "obabel -:" + ligand + " -osdf -O " + filepath + " --gen3d --forcefield mmff94"
+                
+                if platform.system() == "Windows":
+                    cmd = "obabel -:" + ligand + " -osdf -O " + filepath + " --gen3d --forcefield mmff94"
+                elif platform.system() == "Linux":
+                    obabel_path = shutil.which('obabel')
+                    cmd = f"{obabel_path} -:'{ligand}' -osdf -O '{filepath}' --gen3d --forcefield mmff94"
+                else:pass
+
                 try:
-                    subprocess.check_output(cmd, timeout=10, stderr=subprocess.DEVNULL)
-                except subprocess.TimeoutExpired:
+                    subprocess.check_output(cmd, timeout=10, stderr=subprocess.DEVNULL, shell=True)#
+                except Exception:# (subprocess.TimeoutExpired,subprocess.CalledProcessError)
+
                     pass
                 if os.path.exists(filepath):
                     hash_ligand_mapping_per_batch[ligand_hash] = ligand  # Add the hash-ligand mapping to the dictionary
@@ -105,6 +116,10 @@ def read_fasta_file(file_path):
 if __name__ == "__main__":
     about()
     warnings.filterwarnings('ignore')
+    
+    if platform.system() == "Linux":
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    
     #Sometimes, using Hugging Face may require a proxy.
     #os.environ["http_proxy"] = "http://your.proxy.server:port"
     #os.environ["https_proxy"] = "http://your.proxy.server:port"
@@ -118,7 +133,8 @@ if __name__ == "__main__":
     parser.add_argument('-n','--number',type=int, default=100, help='At least how many molecules will be generated. Default value is 100.')
     parser.add_argument('-d','--device',type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
     parser.add_argument('-o','--output', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
-    parser.add_argument('-b','--batch_size', type=int, default=64, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 64.")
+    parser.add_argument('-b','--batch_size', type=int, default=32, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 64.")
+
 
     args = parser.parse_args()
     protein_seq = args.pro_seq
@@ -209,3 +225,4 @@ if __name__ == "__main__":
     print("Saving mapping file ...")
     ligand_post_processor.save_mapping()
     print(f"{len(ligand_post_processor.hash_ligand_mapping)} molecules successfully generated!")
+
