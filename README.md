@@ -3,7 +3,7 @@
 	<div>A generative drug design model based on GPT2</div>
     <br/>
     <p>
-        <img src="https://img.shields.io/badge/license-Artistic%20License%202.0-green">
+        <img src="https://img.shields.io/github/license/LIYUESEN/druggpt">
     	<img src="https://img.shields.io/badge/python-3.7-blue">
         <img src="https://img.shields.io/github/stars/LIYUESEN/druggpt?style=social">
         
@@ -47,7 +47,7 @@ Required parameters:
 - `-d` | `--device`: Hardware device to use. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
 - `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
-## 📃 Example usage 
+## 🔬 Example usage 
 - If you want to input a protein FASTA file
     ```shell
     python drug_generator.py -f bcl2.fasta -n 50
@@ -66,6 +66,13 @@ Required parameters:
     ```shell
     python drug_generator.py -f bcl2.fasta -l 'COc1ccc(cc1)C(=O)' -n 50
     ```
-   
+## 📝 How to reference this work
+DrugGPT: A GPT-based Strategy for Designing Potential Ligands Targeting Specific Proteins
+
+Yuesen Li, Chengyi Gao, Xin Song, Xiangyu Wang, Yungang Xu, Suxia Han
+
+bioRxiv 2023.06.29.543848; doi: [https://doi.org/10.1101/2023.06.29.543848](https://doi.org/10.1101/2023.06.29.543848)
+
+[![DOI](https://img.shields.io/badge/DOI-10.1101/2023.06.29.543848-blue)](https://doi.org/10.1101/2023.06.29.543848)
 ## ⚖ License
-[Artistic License 2.0](https://opensource.org/license/artistic-license-2-0-php/)
+[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html)
