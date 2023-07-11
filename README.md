@@ -1,20 +1,21 @@
 <div class="title" align=center>
     <h1>💊DrugGPT</h1>
-	<div>A generative drug design model based on GPT2</div>
+	<div>A GPT-based Strategy for Designing Potential Ligands Targeting Specific Proteins</div>
     <br/>
     <p>
         <img src="https://img.shields.io/github/license/LIYUESEN/druggpt">
     	<img src="https://img.shields.io/badge/python-3.7-blue">
+	<a href="https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY">
+	<img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
         <img src="https://img.shields.io/github/stars/LIYUESEN/druggpt?style=social">
         
 </div>
 
 ## 🚩 Introduction
-DrugGPT is a generative pharmaceutical strategy based on GPT structure, which aims to bring innovation to drug design by using natural language processing technique. 
+DrugGPT presents a ligand design strategy based on the autoregressive model, GPT, focusing on chemical space exploration and the discovery of ligands for specific proteins. Deep learning language models have shown significant potential in various domains including protein design and 
+biomedical text analysis, providing strong support for the proposition of DrugGPT. 
 
-This project applies the GPT model to the exploration of chemical space to discover new molecules with potential binding abilities for specific proteins. 
-
-DrugGPT provides a fast and efficient method for the generation of drug candidate molecules by training on up to 1.8 million protein-ligand binding data.
+In this study, we employ the DrugGPT model to learn a substantial amount of protein-ligand binding data, aiming to discover novel molecules that can bind with specific proteins. This strategy not only significantly improves the efficiency of ligand design but also offers a swift and effective avenue for the drug development process, bringing new possibilities to the pharmaceutical domain
 ## 📥 Deployment
 ### Clone
 ```shell
@@ -22,18 +23,19 @@ git clone https://github.com/LIYUESEN/druggpt.git
 cd druggpt
 ```
 > Or you can just click *Code>Download ZIP* to download this repo.
-### Create virtual environment
+### Create Python virtual environment
 ```shell
 conda create -n druggpt python=3.7
 conda activate druggpt
 ```
-### Download python dependencies
+### Install PyTorch and other requirements
 ```shell
-pip install datasets transformers scipy scikit-learn
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+pip install datasets transformers scipy scikit-learn
 conda install -c openbabel openbabel
 ```
 ## 🗝 How to use
+### 💻 Run locally
 Use [drug_generator.py](https://github.com/LIYUESEN/druggpt/blob/main/drug_generator.py)
 
 Required parameters:
@@ -47,6 +49,8 @@ Required parameters:
 - `-d` | `--device`: Hardware device to use. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
 - `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
+### 🌎 Run in Google Colab
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY)
 ## 🔬 Example usage 
 - If you want to input a protein FASTA file
     ```shell
