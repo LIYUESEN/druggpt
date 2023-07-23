@@ -65,7 +65,7 @@ class LigandPostprocessor:
         for ligand in tqdm(ligand_list_per_batch):
             ligand_hash = hashlib.sha1(ligand.encode()).hexdigest()
             if ligand_hash not in self.hash_ligand_mapping.keys():
-                filepath = self.output_path + ligand_hash + '.sdf'
+                filepath = os.path.join(self.output_path , ligand_hash + '.sdf')
                 
                 if platform.system() == "Windows":
                     cmd = "obabel -:" + ligand + " -osdf -O " + filepath + " --gen3d --forcefield mmff94"
