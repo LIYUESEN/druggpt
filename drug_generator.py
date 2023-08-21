@@ -6,10 +6,6 @@ Created on Mon May  1 19:41:07 2023
 """
 
 import os
-os.environ["http_proxy"] = "http://127.0.0.1:7890"
-os.environ["https_proxy"] = "http://127.0.0.1:7890"
-
-import os
 import sys
 import subprocess
 import hashlib
