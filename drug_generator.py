@@ -6,6 +6,10 @@ Created on Mon May  1 19:41:07 2023
 """
 
 import os
+os.environ["http_proxy"] = "http://127.0.0.1:7890"
+os.environ["https_proxy"] = "http://127.0.0.1:7890"
+
+import os
 import sys
 import subprocess
 import hashlib
@@ -19,6 +23,43 @@ import torch
 from transformers import AutoTokenizer, GPT2LMHeadModel
 import shutil
 
+import time
+import subprocess
+import threading
+import os
+import signal
+import psutil
+
+class Command(object):
+    def __init__(self, cmd):
+        self.cmd = cmd
+        self.process = None
+
+    def run(self, timeout):
+        def target():
+            try:
+                if os.name == 'posix':  # Unix/Linux/Mac
+                    self.process = subprocess.Popen(self.cmd, shell=True, stderr=subprocess.DEVNULL,preexec_fn=os.setsid)
+                else:  # Windows
+                    self.process = subprocess.Popen(self.cmd, shell=True, stderr=subprocess.DEVNULL)
+                self.process.communicate()
+            except Exception:
+                pass
+
+        thread = threading.Thread(target=target)
+        thread.start()
+
+        thread.join(timeout)
+        if thread.is_alive():
+            if os.name == 'posix':  # Unix/Linux/Mac
+                os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
+            else:  # Windows
+                parent = psutil.Process(self.process.pid)
+                for child in parent.children(recursive=True):
+                    child.kill()
+                parent.kill()
+            thread.join()
+        return self.process.returncode if self.process else None
 
 
 class LigandPostprocessor:
@@ -50,19 +91,21 @@ class LigandPostprocessor:
         ligand_hash_list = list(hash_ligand_mapping_per_batch.keys())
         mapping_per_match = hash_ligand_mapping_per_batch.copy()
         for ligand_hash in tqdm(ligand_hash_list):
-            filepath = os.path.join(self.output_path, ligand_hash + '.sdf')
-            with open(filepath, 'r') as f:
-                text = f.read()
-            if len(text) < 2:
-                os.remove(filepath)
-                mapping_per_match.pop(ligand_hash)
+            filepath = os.path.join(self.output_path, ligand_hash + '.sdf')            
+            if os.path.getsize(filepath) < 2*1024:  #2kb
+                try:
+                    os.remove(filepath)
+                    #mapping_per_match.pop(ligand_hash)
+                except Exception:
+                    print(filepath)
+                mapping_per_match.pop(ligand_hash)    
         return mapping_per_match
 
     # Define a function to generate SDF files from a list of ligand SMILES using OpenBabel
     def to_sdf(self, ligand_list_per_batch):
         print("Converting to sdf ...")
         hash_ligand_mapping_per_batch = {}
-        for ligand in tqdm(ligand_list_per_batch):
+        for ligand in tqdm(ligand_list_per_batch):  
             ligand_hash = hashlib.sha1(ligand.encode()).hexdigest()
             if ligand_hash not in self.hash_ligand_mapping.keys():
                 filepath = os.path.join(self.output_path , ligand_hash + '.sdf')
@@ -75,14 +118,49 @@ class LigandPostprocessor:
                 else:pass
 
                 try:
-                    subprocess.check_output(cmd, timeout=10, stderr=subprocess.DEVNULL, shell=True)#
-                except Exception:# (subprocess.TimeoutExpired,subprocess.CalledProcessError)
-
-                    pass
+                    command = Command(cmd)
+                    return_code = command.run(timeout=10)
+                    if return_code != 0:  # Check the return value
+                        #print(f"Command execution failed with return code: {return_code}")
+                        continue  # Skip the current iteration if the command execution failed
+                except Exception:
+                    time.sleep(1)
+                    
                 if os.path.exists(filepath):
                     hash_ligand_mapping_per_batch[ligand_hash] = ligand  # Add the hash-ligand mapping to the dictionary
         self.hash_ligand_mapping.update(self.filter_sdf(hash_ligand_mapping_per_batch))
-
+    
+    def delete_empty_files(self):
+    # 遍历指定目录及其子目录中的所有文件
+        for foldername, subfolders, filenames in os.walk(self.output_path):
+            for filename in filenames:
+                file_path = os.path.join(foldername, filename)
+                # 如果文件大小为0，则删除该文件
+                if os.path.getsize(file_path) < 2*1024:  #2kb
+                    try:
+                        os.remove(file_path)
+                        print(f'Deleted {file_path}')
+                    except Exception:
+                        pass 
+    
+    
+    def check_sdf(self):
+        file_list = os.listdir(self.output_path)
+        sdf_file_list = [x for x in file_list if x[-4:]=='sdf']
+        for filename in sdf_file_list:
+            hash_ = filename[:-4]
+            if hash_ not in self.hash_ligand_mapping.keys():
+                filepath = os.path.join(self.output_path,filename)
+                try:
+                    os.remove(filepath)
+                    print('remove ' + filepath)
+                except Exception:
+                    pass
+            else:pass    
+                
+               
+                
+    
 def about():
     print("""
   _____                    _____ _____ _______ 
@@ -113,6 +191,8 @@ def read_fasta_file(file_path):
         protein_sequence = ''.join(sequence)
     return protein_sequence
 
+
+                    
 if __name__ == "__main__":
     about()
     warnings.filterwarnings('ignore')
@@ -193,7 +273,7 @@ if __name__ == "__main__":
     directly_gen_protein_list = []
     directly_gen_ligand_list = []
 
-    while len(os.listdir(output_path)) < num_generated:
+    while len(ligand_post_processor.hash_ligand_mapping) < num_generated:
         generate_ligand_list = []
         batch_number += 1
         print(f"=====Batch {batch_number}=====")
@@ -215,7 +295,9 @@ if __name__ == "__main__":
                 directly_gen_ligand_list.append(generate_ligand)
         torch.cuda.empty_cache()
         ligand_post_processor.to_sdf(generate_ligand_list)
-
+        ligand_post_processor.delete_empty_files()
+        ligand_post_processor.check_sdf()
+        
     if directly_gen:
         arr = np.array([directly_gen_protein_list, directly_gen_ligand_list])
         processed_ligand_list = ligand_post_processor.hash_ligand_mapping.values()
@@ -229,4 +311,3 @@ if __name__ == "__main__":
     print("Saving mapping file ...")
     ligand_post_processor.save_mapping()
     print(f"{len(ligand_post_processor.hash_ligand_mapping)} molecules successfully generated!")
-
