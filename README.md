@@ -11,7 +11,7 @@
 </div>
 
 ## 💥 NEWS
-This project is now under experimental evaluation to confirm its actual value in drug research. Please continue to follow us!
+**2024/01/18** This project is now under experimental evaluation to confirm its actual value in drug research. Please continue to follow us!
 
 ## 🚩 Introduction
 DrugGPT presents a ligand design strategy based on the autoregressive model, GPT, focusing on chemical space exploration and the discovery of ligands for specific proteins. Deep learning language models have shown significant potential in various domains including protein design and 
