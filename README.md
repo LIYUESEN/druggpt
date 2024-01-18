@@ -8,8 +8,10 @@
 	<a href="https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY">
 	<img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
         <img src="https://img.shields.io/github/stars/LIYUESEN/druggpt?style=social">
-        
 </div>
+
+## 💥 NEWS
+This project is now under experimental evaluation to confirm its actual value in drug research. Please continue to follow us!
 
 ## 🚩 Introduction
 DrugGPT presents a ligand design strategy based on the autoregressive model, GPT, focusing on chemical space exploration and the discovery of ligands for specific proteins. Deep learning language models have shown significant potential in various domains including protein design and 
