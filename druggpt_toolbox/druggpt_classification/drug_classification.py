@@ -5,11 +5,6 @@ Created on Fri Jul 14 15:40:31 2023
 @author: Sen
 """
 
-#%%网络代理
-import os
-os.environ["http_proxy"] = "http://127.0.0.1:7890"
-os.environ["https_proxy"] = "http://127.0.0.1:7890"
-
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', type=str, default=None, help='Input the dirpath')
