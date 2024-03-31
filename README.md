@@ -11,8 +11,8 @@
 </div>
 
 ## 💥 NEWS
-**2024/01/18** This project is now under experimental evaluation to confirm its actual value in drug research. Please continue to follow us!
-**2024/03/31** I've decided to create a branch named druggpt_v1.0 for the current version since it is a stable release. Subsequently, I will continue to update the code.
+**2024/01/18** This project is now under experimental evaluation to confirm its actual value in drug research. Please continue to follow us!  
+**2024/03/31** I've decided to create a branch named druggpt_v1.0 for the current version since it is a stable release. Subsequently, I will continue to update the code.  
 **2024/03/31** After careful consideration, I plan to create new repositories named druggpt_toolbox and druggpt_train to store post-processing tool scripts and training scripts, respectively. This repository should focus primarily on the generation of drug candidate molecules.
 
 ## 🚩 Introduction
