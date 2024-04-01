@@ -35,11 +35,11 @@ conda activate druggpt
 ### Install PyTorch and other requirements
 ```shell
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
-pip install datasets transformers scipy scikit-learn
+pip install datasets transformers scipy scikit-learn gradio psutil
 conda install -c openbabel openbabel
 ```
 ## 🗝 How to use
-### 💻 Run locally
+### 💻 Run in command
 Use [drug_generator.py](https://github.com/LIYUESEN/druggpt/blob/main/drug_generator.py)
 
 Required parameters:
@@ -55,6 +55,12 @@ Required parameters:
 - `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
 - `--top_k`: The number of highest probability tokens to consider for top-k sampling. Defaults to 9.
 - `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
+### 🎰 Use the WebUI
+Use [webui.py](https://github.com/LIYUESEN/druggpt/blob/main/webui.py)
+
+Required parameters:
+- `-p` | `--port`: Port of WebUI.
+
 ### 🌎 Run in Google Colab
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY)
 ## 🔬 Example usage 
