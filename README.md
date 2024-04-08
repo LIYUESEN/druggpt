@@ -11,6 +11,7 @@
 </div>
 
 ## 💥 NEWS
+**2024/04/03** Version upgraded to druggpt_v1.1, enhancing stability and adding a webui. Future versions will feature atom number control in molecules. Stay tuned.  
 **2024/03/31** After careful consideration, I plan to create new repositories named druggpt_toolbox and druggpt_train to store post-processing tool scripts and training scripts, respectively. This repository should focus primarily on the generation of drug candidate molecules.  
 **2024/03/31** I've decided to create a branch named druggpt_v1.0 for the current version since it is a stable release. Subsequently, I will continue to update the code.  
 **2024/01/18** This project is now under experimental evaluation to confirm its actual value in drug research. Please continue to follow us!  
@@ -55,12 +56,12 @@ Required parameters:
 - `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
 - `--top_k`: The number of highest probability tokens to consider for top-k sampling. Defaults to 9.
 - `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
-
 ### 🎰 Use the WebUI
 Use [webui.py](https://github.com/LIYUESEN/druggpt/blob/main/webui.py)
 
 Required parameters:
 - `-p` | `--port`: Port of WebUI.
+
 ### 🌎 Run in Google Colab
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY)
 ## 🔬 Example usage 
