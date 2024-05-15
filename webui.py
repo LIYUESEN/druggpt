@@ -50,6 +50,13 @@ def change_input_format(input_format):
         }
 
 
+def disable_atoms_limit(ligand_prompt):
+    if ligand_prompt:
+        return {"__type__": "update", "value": None, "interactive": False}, {"__type__": "update", "value": None, "interactive": False}
+    else:
+        return {"__type__": "update", "interactive": True}, {"__type__": "update", "interactive": True}
+
+
 def run_generate(input_format,
                  input_data,
                  ligand_prompt,
@@ -58,7 +65,9 @@ def run_generate(input_format,
                  device,
                  output,
                  top_k,
-                 top_p
+                 top_p,
+                 min_atoms,
+                 max_atoms
                  ):
     global p_generate
     if p_generate:
@@ -66,7 +75,7 @@ def run_generate(input_format,
             "__type__": "update", "visible": False}, {
             "__type__": "update", "visible": True}
     else:
-        cmd = f'python drug_generator.py {"-p " if input_format == "Protein Sequence" else "-f"} {input_data} {"-l "+ligand_prompt if ligand_prompt else ""} -n {number} -d {device} -o {output} -b {batch_size} --top_k {top_k} --top_p {top_p}'
+        cmd = f'python drug_generator.py {"-p " if input_format == "Protein Sequence" else "-f"} {input_data} {"-l "+ligand_prompt if ligand_prompt else ""} -n {number} -d {device} -o {output} -b {batch_size} --top_k {top_k} --top_p {top_p} {"--min_atoms "+str(min_atoms) if min_atoms else ""} {"--max_atoms "+str(max_atoms) if max_atoms else ""}'
         yield "Generation started：%s" % cmd, {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
         print(cmd)
         p_generate = psutil.Popen(cmd, shell=True)
@@ -102,13 +111,14 @@ if __name__ == "__main__":
                                           placeholder="Input protein amino acid sequence here")
                 textboxLigandPrompt = gr.Textbox(label="Ligand Prompt", interactive=True)
 
-                dropdownInputFormat.change(change_input_format, [dropdownInputFormat], [textboxInput])
             gr.Markdown(value="Parameters")
             with gr.Row():
                 numberAmount = gr.Number(label="Minimum Generation Amount", interactive=True, value=100)
                 numberBatchSize = gr.Number(label="Batch Size", interactive=True, value=32)
                 sliderTopK = gr.Slider(minimum=1, maximum=100, step=1, label="top_k", value=9, interactive=True)
                 sliderTopP = gr.Slider(minimum=0, maximum=1, step=0.05, label="top_p", value=0.9, interactive=True)
+                numberMinAtoms = gr.Number(label="Minimum Atoms", interactive=True, value=lambda: None)
+                numberMaxAtoms = gr.Number(label="Maximum Atoms", interactive=True, value=lambda: None)
             gr.Markdown(value="Output")
             with gr.Row():
                 textboxOutput = gr.Textbox(label="Output Folder", interactive=True, value="ligand_output/")
@@ -125,9 +135,12 @@ if __name__ == "__main__":
 
             btnRunGenerating.click(run_generate,
                                    [dropdownInputFormat, textboxInput, textboxLigandPrompt, numberAmount,
-                                    numberBatchSize, dropdownDevice, textboxOutput, sliderTopK, sliderTopP],
+                                    numberBatchSize, dropdownDevice, textboxOutput, sliderTopK, sliderTopP, numberMinAtoms, numberMaxAtoms],
                                    [textboxLog, btnRunGenerating, btnStopGenerating])
             btnStopGenerating.click(stop_generate, [], [textboxLog, btnRunGenerating, btnStopGenerating])
+
+            dropdownInputFormat.change(change_input_format, [dropdownInputFormat], [textboxInput])
+            textboxLigandPrompt.change(disable_atoms_limit, [textboxLigandPrompt], [numberMinAtoms, numberMaxAtoms])
 
     app.launch(
         server_name="0.0.0.0",
