@@ -56,6 +56,10 @@ Required parameters:
 - `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
 - `--top_k`: The number of highest probability tokens to consider for top-k sampling. Defaults to 9.
 - `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
+- `--min_atoms`: Minimum number of non-H atoms allowed for generation. Defaults to None.
+- `--max_atoms`: Maximum number of non-H atoms allowed for generation. Defaults to None.
+
+  > If the `-l` | `--ligand_prompt` option is used, the `--max_atoms` and `--min_atoms` parameters will be disregarded.
 ### 🎰 Use the WebUI
 Use [webui.py](https://github.com/LIYUESEN/druggpt/blob/main/webui.py)
 
