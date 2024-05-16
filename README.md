@@ -11,6 +11,8 @@
 </div>
 
 ## 💥 NEWS
+**2024/05/16** Wet-lab experiments confirm druggpt's ability to design ligands with new scaffolds from scratch and to repurpose existing ligands. Ligand optimization remains under evaluation. Stay tuned for more updates!  
+**2024/05/16** The version has been upgraded to druggpt_v1.2, featuring new atom number control capabilities. Due to compatibility issues, the webui has been removed.  
 **2024/04/03** Version upgraded to druggpt_v1.1, enhancing stability and adding a webui. Future versions will feature atom number control in molecules. Stay tuned.  
 **2024/03/31** After careful consideration, I plan to create new repositories named druggpt_toolbox and druggpt_train to store post-processing tool scripts and training scripts, respectively. This repository should focus primarily on the generation of drug candidate molecules.  
 **2024/03/31** I've decided to create a branch named druggpt_v1.0 for the current version since it is a stable release. Subsequently, I will continue to update the code.  
@@ -36,7 +38,7 @@ conda activate druggpt
 ### Install PyTorch and other requirements
 ```shell
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
-pip install datasets transformers scipy scikit-learn gradio psutil
+pip install datasets transformers scipy scikit-learn
 conda install -c openbabel openbabel
 ```
 ## 🗝 How to use
@@ -60,11 +62,6 @@ Required parameters:
 - `--max_atoms`: Maximum number of non-H atoms allowed for generation. Defaults to None.
 
   > If the `-l` | `--ligand_prompt` option is used, the `--max_atoms` and `--min_atoms` parameters will be disregarded.
-### 🎰 Use the WebUI
-Use [webui.py](https://github.com/LIYUESEN/druggpt/blob/main/webui.py)
-
-Required parameters:
-- `-p` | `--port`: Port of WebUI.
 
 ### 🌎 Run in Google Colab
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY)
