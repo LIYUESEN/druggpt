@@ -56,6 +56,7 @@ Required parameters:
 - `-d` | `--device`: Hardware device to use. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
 - `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
+- `-t` | `--temperature`: Adjusts the randomness of text generation; higher values produce more diverse outputs. Default value is 1.0.
 - `--top_k`: The number of highest probability tokens to consider for top-k sampling. Defaults to 9.
 - `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
 - `--min_atoms`: Minimum number of non-H atoms allowed for generation. Defaults to None.

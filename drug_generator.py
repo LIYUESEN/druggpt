@@ -225,6 +225,7 @@ if __name__ == "__main__":
     parser.add_argument('-d','--device',type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
     parser.add_argument('-o','--output', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
     parser.add_argument('-b','--batch_size', type=int, default=32, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 32.")
+    parser.add_argument('-t','--temperature', type=float, default=1.0, help="Adjusts the randomness of text generation; higher values produce more diverse outputs. Default value is 1.0.")
     parser.add_argument('--top_k', type=int, default=9, help='The number of highest probability tokens to consider for top-k sampling. Defaults to 9.')
     parser.add_argument('--top_p', type=float, default=0.9, help='The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.')
     parser.add_argument('--min_atoms', type=int, default=None, help='Minimum number of non-H atoms allowed for generation.')
@@ -240,6 +241,7 @@ if __name__ == "__main__":
     device = args.device
     output_path = args.output
     batch_generated_size = args.batch_size
+    temperature_value = args.temperature
     top_k = args.top_k
     top_p = args.top_p
     min_atoms = args.min_atoms
@@ -308,6 +310,7 @@ if __name__ == "__main__":
             top_k=top_k,
             max_length=1024,
             top_p=top_p,
+            temperature=temperature_value,
             num_return_sequences=batch_generated_size
         )
         for sample_output in sample_outputs:
