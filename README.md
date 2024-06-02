@@ -61,6 +61,7 @@ Required parameters:
 - `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
 - `--min_atoms`: Minimum number of non-H atoms allowed for generation. Defaults to None.
 - `--max_atoms`: Maximum number of non-H atoms allowed for generation. Defaults to None.
+- `--no_limit`: Disable the default max atoms limit.
 
   > If the `-l` | `--ligand_prompt` option is used, the `--max_atoms` and `--min_atoms` parameters will be disregarded.
 

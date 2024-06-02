@@ -185,9 +185,6 @@ def about():
  A generative drug design model based on GPT2
     """)
 
-def ifno_mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
 
 # Function to read in FASTA file
 def read_fasta_file(file_path):
@@ -229,7 +226,8 @@ if __name__ == "__main__":
     parser.add_argument('--top_k', type=int, default=9, help='The number of highest probability tokens to consider for top-k sampling. Defaults to 9.')
     parser.add_argument('--top_p', type=float, default=0.9, help='The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.')
     parser.add_argument('--min_atoms', type=int, default=None, help='Minimum number of non-H atoms allowed for generation.')
-    parser.add_argument('--max_atoms', type=int, default=None, help='Maximum number of non-H atoms allowed for generation.')
+    parser.add_argument('--max_atoms', type=int, default=35, help='Maximum number of non-H atoms allowed for generation. Default value is 35.')
+    parser.add_argument('--no_limit', action='store_true', default=False, help='Disable the default max atoms limit.')
 
 
     args = parser.parse_args()
@@ -246,6 +244,8 @@ if __name__ == "__main__":
     top_p = args.top_p
     min_atoms = args.min_atoms
     max_atoms = args.max_atoms
+    if args.no_limit:
+        max_atoms = None
     
     if (args.min_atoms is not None) and (args.max_atoms is not None) and (args.min_atoms > args.max_atoms):
         raise ValueError("Error: min_atoms cannot be greater than max_atoms.")
@@ -255,7 +255,7 @@ if __name__ == "__main__":
         args.min_atoms = None
         print("Note: --ligand_prompt is specified. --max_atoms and --min_atoms settings will be ignored.")
     
-    ifno_mkdirs(output_path)
+    os.makedirs(output_path, exist_ok=True)
     # Check if the input is either a protein amino acid sequence or a FASTA file, but not both
     if directly_gen:
         print("Now in directly generate mode.")
