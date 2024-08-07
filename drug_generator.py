@@ -20,13 +20,13 @@ from transformers import AutoTokenizer, GPT2LMHeadModel
 import shutil
 
 from openbabel import openbabel
+import logging
 import time
 import subprocess
 import threading
 import os
 import signal
 import psutil
-
 
 class Command(object):
     def __init__(self, cmd):
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     parser.add_argument('-n','--number',type=int, default=100, help='At least how many molecules will be generated. Default value is 100.')
     parser.add_argument('-d','--device',type=str, default='cuda', help="Hardware device to use. Default value is 'cuda'.")
     parser.add_argument('-o','--output', type=str, default='./ligand_output/', help="Output directory for generated molecules. Default value is './ligand_output/'.")
-    parser.add_argument('-b','--batch_size', type=int, default=32, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 32.")
+    parser.add_argument('-b','--batch_size', type=int, default=16, help="How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default value is 16.")
     parser.add_argument('-t','--temperature', type=float, default=1.0, help="Adjusts the randomness of text generation; higher values produce more diverse outputs. Default value is 1.0.")
     parser.add_argument('--top_k', type=int, default=9, help='The number of highest probability tokens to consider for top-k sampling. Defaults to 9.')
     parser.add_argument('--top_p', type=float, default=0.9, help='The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.')
@@ -244,6 +244,7 @@ if __name__ == "__main__":
     top_p = args.top_p
     min_atoms = args.min_atoms
     max_atoms = args.max_atoms
+
     if args.no_limit:
         max_atoms = None
     
@@ -255,6 +256,8 @@ if __name__ == "__main__":
         args.min_atoms = None
         print("Note: --ligand_prompt is specified. --max_atoms and --min_atoms settings will be ignored.")
     
+    logging.basicConfig(level=logging.CRITICAL)
+    openbabel.obErrorLog.StopLogging()
     os.makedirs(output_path, exist_ok=True)
     # Check if the input is either a protein amino acid sequence or a FASTA file, but not both
     if directly_gen:
@@ -297,7 +300,9 @@ if __name__ == "__main__":
 
     directly_gen_protein_list = []
     directly_gen_ligand_list = []
+    
 
+    attention_mask = generated.ne(tokenizer.pad_token_id).float()
     while len(ligand_post_processor.hash_ligand_mapping) < num_generated:
         generate_ligand_list = []
         batch_number += 1
@@ -305,13 +310,14 @@ if __name__ == "__main__":
         print("Generating ligand SMILES ...")
         sample_outputs = model.generate(
             generated,
-            # bos_token_id=random.randint(1,30000),
             do_sample=True,
             top_k=top_k,
             max_length=1024,
             top_p=top_p,
             temperature=temperature_value,
-            num_return_sequences=batch_generated_size
+            num_return_sequences=batch_generated_size, 
+            attention_mask=attention_mask,
+            pad_token_id = tokenizer.eos_token_id
         )
         for sample_output in sample_outputs:
             generate_ligand = tokenizer.decode(sample_output, skip_special_tokens=True).split('<L>')[1]

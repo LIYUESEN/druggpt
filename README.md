@@ -11,6 +11,7 @@
 </div>
 
 ## 💥 NEWS
+**2024/07/30** All wet-lab validations have been completed, confirming that DrugGPT possesses ligand optimization capabilities.  
 **2024/05/16** Wet-lab experiments confirm druggpt's ability to design ligands with new scaffolds from scratch and to repurpose existing ligands. Ligand optimization remains under evaluation. Stay tuned for more updates!  
 **2024/05/16** The version has been upgraded to druggpt_v1.2, featuring new atom number control capabilities. Due to compatibility issues, the webui has been removed.  
 **2024/04/03** Version upgraded to druggpt_v1.1, enhancing stability and adding a webui. Future versions will feature atom number control in molecules. Stay tuned.  
@@ -55,7 +56,7 @@ Required parameters:
 - `-n` | `--number`: At least how many molecules will be generated.
 - `-d` | `--device`: Hardware device to use. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
-- `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 32.
+- `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 16.
 - `-t` | `--temperature`: Adjusts the randomness of text generation; higher values produce more diverse outputs. Default value is 1.0.
 - `--top_k`: The number of highest probability tokens to consider for top-k sampling. Defaults to 9.
 - `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
