@@ -39,7 +39,7 @@ conda activate druggpt
 ### Install PyTorch and other requirements
 ```shell
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
-pip install datasets transformers scipy scikit-learn
+pip install datasets transformers scipy scikit-learn psutil
 conda install -c openbabel openbabel
 ```
 ## 🗝 How to use
