@@ -11,6 +11,7 @@
 </div>
 
 ## 💥 NEWS
+**2024/08/11** We're excited to announce a new feature, Ligand Energy Minimization, now available in our latest release. Additionally, explore our new tool, druggpt_min_multi.py, designed specifically for efficient energy minimization of multiple ligands.  
 **2024/07/30** All wet-lab validations have been completed, confirming that DrugGPT possesses ligand optimization capabilities.  
 **2024/05/16** Wet-lab experiments confirm druggpt's ability to design ligands with new scaffolds from scratch and to repurpose existing ligands. Ligand optimization remains under evaluation. Stay tuned for more updates!  
 **2024/05/16** The version has been upgraded to druggpt_v1.2, featuring new atom number control capabilities. Due to compatibility issues, the webui has been removed.  

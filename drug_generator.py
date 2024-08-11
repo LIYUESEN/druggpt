@@ -302,7 +302,7 @@ if __name__ == "__main__":
     directly_gen_protein_list = []
     directly_gen_ligand_list = []
     
-    '''
+
     attention_mask = generated.ne(tokenizer.pad_token_id).float()
     while len(ligand_post_processor.hash_ligand_mapping) < num_generated:
         generate_ligand_list = []
@@ -344,6 +344,6 @@ if __name__ == "__main__":
     print("Saving mapping file ...")
     ligand_post_processor.save_mapping()
     print(f"{len(ligand_post_processor.hash_ligand_mapping)} molecules successfully generated!")
-    '''
+
     print("Ligand Energy Minimization")
     result = subprocess.run(['python', 'druggpt_min_multi.py', '-d', output_path])
