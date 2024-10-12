@@ -5,7 +5,7 @@
     <p>
         <img src="https://img.shields.io/github/license/LIYUESEN/druggpt">
     	<img src="https://img.shields.io/badge/python-3.7-blue">
-	<a href="https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY">
+	<a href="https://colab.research.google.com/drive/1DBJWuAQc1Tl-SiIk6QWcXvBAWHQ01_kw">
 	<img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
         <img src="https://img.shields.io/github/stars/LIYUESEN/druggpt?style=social">
 </div>
@@ -41,7 +41,7 @@ conda activate druggpt
 ```shell
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 pip install datasets transformers scipy scikit-learn psutil
-conda install -c openbabel openbabel
+conda install conda-forge/label/cf202003::openbabel
 ```
 ## 🗝 How to use
 ### 💻 Run in command

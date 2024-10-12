@@ -29,6 +29,10 @@ import os
 import signal
 import psutil
 
+import os
+os.environ["http_proxy"] = "http://127.0.0.1:7890"
+os.environ["https_proxy"] = "http://127.0.0.1:7890"
+
 class Command(object):
     def __init__(self, cmd):
         self.cmd = cmd
@@ -137,6 +141,7 @@ class LigandPostprocessor:
                         continue  # Skip the current iteration if the command execution failed
                 except Exception:
                     time.sleep(1)
+                    continue
                     
                 if os.path.exists(filepath):
                     hash_ligand_mapping_per_batch[ligand_hash] = ligand  # Add the hash-ligand mapping to the dictionary

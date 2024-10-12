@@ -58,22 +58,7 @@ def sdf_min(input_sdf, output_sdf):
     # 将能量最小化后的分子写入到SDF文件
     conv.WriteFile(mol, output_sdf)
     
-#%% old code
-'''
-from tqdm import tqdm
-file_list = os.listdir(input_dirpath)
-for filename in tqdm(file_list):
-    if '.sdf' == filename[-4:]:
-        input_sdf_file = os.path.join(input_dirpath,filename)
-        output_sdf_file = os.path.join(output_dirpath,filename)
-        sdf_min(input_sdf_file, output_sdf_file)
-    else:
-        src_file = os.path.join(input_dirpath,filename)
-        dst_file = os.path.join(output_dirpath,filename)
-        shutil.copy(src_file,dst_file)#改成copy
-'''    
-
-#%% new code
+#%% 
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 import multiprocessing
@@ -84,11 +69,14 @@ def handle_file(filename):
         output_sdf_file = os.path.join(output_dirpath, filename)
         try:
             sdf_min(input_sdf_file, output_sdf_file)
-        except Exception:
+        except Exception as e:
+            print(f"An error occurred while processing the file '{input_sdf_file}': {e}")
             try:
                 os.remove(output_sdf_file)
+                print(output_sdf_file + ' was successfully removed')
             except Exception:
-                print('please remove '+output_sdf_file)
+                if os.path.exists(output_sdf_file):
+                    print('please remove '+output_sdf_file)
     else:
         src_file = os.path.join(input_dirpath, filename)
         dst_file = os.path.join(output_dirpath, filename)
