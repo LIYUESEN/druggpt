@@ -72,7 +72,7 @@ Required parameters:
 ## 🔬 Example usage 
 - If you want to input a protein FASTA file
     ```shell
-    python drug_generator.py -f bcl2.fasta -n 50
+    python drug_generator.py -f BCL2L11.fasta -n 50
     ```
 - If you want to input the amino acid sequence of the protein
     ```shell
@@ -81,12 +81,12 @@ Required parameters:
     
 - If you want to provide a prompt for the ligand  
     ```shell
-    python drug_generator.py -f bcl2.fasta -l COc1ccc(cc1)C(=O) -n 50
+    python drug_generator.py -f BCL2L11.fasta -l COc1ccc(cc1)C(=O) -n 50
     ```
     
 - Note: If you are running in a Linux environment, you need to enclose the ligand's prompt with single quotes ('').  
     ```shell
-    python drug_generator.py -f bcl2.fasta -l 'COc1ccc(cc1)C(=O)' -n 50
+    python drug_generator.py -f BCL2L11.fasta -l 'COc1ccc(cc1)C(=O)' -n 50
     ```
 ## 📝 How to reference this work
 DrugGPT: A GPT-based Strategy for Designing Potential Ligands Targeting Specific Proteins
