@@ -4,7 +4,7 @@
     <br/>
     <p>
         <img src="https://img.shields.io/github/license/LIYUESEN/druggpt">
-    	<img src="https://img.shields.io/badge/python-3.7-blue">
+    	<img src="https://img.shields.io/badge/python-3.8-blue">
 	<a href="https://colab.research.google.com/drive/1DBJWuAQc1Tl-SiIk6QWcXvBAWHQ01_kw">
 	<img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
         <img src="https://img.shields.io/github/stars/LIYUESEN/druggpt?style=social">
@@ -34,7 +34,7 @@ cd druggpt
 > Or you can just click *Code>Download ZIP* to download this repo.
 ### Create Python virtual environment
 ```shell
-conda create -n druggpt python=3.7
+conda create -n druggpt python=3.8
 conda activate druggpt
 ```
 ### Install PyTorch and other requirements
