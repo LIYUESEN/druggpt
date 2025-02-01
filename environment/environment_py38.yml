@@ -1,4 +1,4 @@
-name: druggpt_test
+name: druggpt_py38
 channels:
   - conda-forge/label/cf202003
   - defaults

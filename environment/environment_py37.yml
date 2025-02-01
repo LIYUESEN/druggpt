@@ -1,4 +1,4 @@
-name: druggpt
+name: druggpt_py37
 channels:
   - conda-forge/label/cf202003
   - defaults
