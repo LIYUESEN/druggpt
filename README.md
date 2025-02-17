@@ -68,7 +68,7 @@ Required parameters:
   > If the `-l` | `--ligand_prompt` option is used, the `--max_atoms` and `--min_atoms` parameters will be disregarded.
 
 ### 🌎 Run in Google Colab
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x7w6LcgkB4kxDDVny4SRVIvvjkUe8vbE#scrollTo=2h2QAp7EqgyY)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1DBJWuAQc1Tl-SiIk6QWcXvBAWHQ01_kw)
 ## 🔬 Example usage 
 - If you want to input a protein FASTA file
     ```shell
