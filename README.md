@@ -49,20 +49,19 @@ Use [drug_generator.py](https://github.com/LIYUESEN/druggpt/blob/main/drug_gener
 
 Required parameters:
 - `-p` | `--pro_seq`: Input a protein amino acid sequence.
-- `-f` | `--fasta`: Input a FASTA file.
+- `-f` | `--fasta`: Input a FASTA file including one protein amino acid sequence.
 
   > Only one of -p and -f should be specified.
 - `-l` | `--ligand_prompt`: Input a ligand prompt.
-- `-e` | `--empty_input`: Enable directly generate mode.
-- `-n` | `--number`: At least how many molecules will be generated.
-- `-d` | `--device`: Hardware device to use. Default is 'cuda'.
+- `-n` | `--number`: The expected number of molecules to be generated.
+- `-d` | `--device`: Hardware device to be used. Default is 'cuda'.
 - `-o` | `--output`: Output directory for generated molecules. Default is './ligand_output/'.
-- `-b` | `--batch_size`: How many molecules will be generated per batch. Try to reduce this value if you have low RAM. Default is 16.
-- `-t` | `--temperature`: Adjusts the randomness of text generation; higher values produce more diverse outputs. Default value is 1.0.
-- `--top_k`: The number of highest probability tokens to consider for top-k sampling. Defaults to 9.
-- `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Defaults to 0.9.
-- `--min_atoms`: Minimum number of non-H atoms allowed for generation. Defaults to None.
-- `--max_atoms`: Maximum number of non-H atoms allowed for generation. Defaults to 35.
+- `-b` | `--batch_size`: The number of molecules to be generated per batch. Try to reduce this value if you have low RAM. Default is 16.
+- `-t` | `--temperature`: Adjusts the randomness of text generation; higher values produce more diverse outputs. Default is 1.0.
+- `--top_k`: The number of highest probability tokens to be considered for top-k sampling. Default is 9.
+- `--top_p`: The cumulative probability threshold (0.0 - 1.0) for top-p (nucleus) sampling. It defines the minimum subset of tokens to consider for random sampling. Default is 0.9.
+- `--min_atoms`: Minimum number of non-H atoms allowed for generation. Default is None.
+- `--max_atoms`: Maximum number of non-H atoms allowed for generation. Default is 35.
 - `--no_limit`: Disable the default max atoms limit.
 
   > If the `-l` | `--ligand_prompt` option is used, the `--max_atoms` and `--min_atoms` parameters will be disregarded.
@@ -88,6 +87,11 @@ Required parameters:
     ```shell
     python drug_generator.py -f BCL2L11.fasta -l 'COc1ccc(cc1)C(=O)' -n 50
     ```
+## ✉️ Contact
+Yuesen Li      lisen2286@gmail.com  
+
+Yungang Xu     yungang.xu@xjtu.edu.cn
+
 ## 📝 How to reference this work
 DrugGPT: A GPT-based Strategy for Designing Potential Ligands Targeting Specific Proteins
 
